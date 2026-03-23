@@ -1,0 +1,1051 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Dearly Ayu · Virtual Assistant</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500;600;700&family=Cormorant+Garamond:ital,wght@1,300;1,400&display=swap" rel="stylesheet"/>
+  <style>
+    :root {
+      --orange:   #E8622A;
+      --orange2:  #D4521E;
+      --ol:       rgba(232,98,42,0.12);
+      --ol2:      rgba(232,98,42,0.06);
+
+      /* ALL LIGHT palette */
+      --bg:       #FDFAF4;
+      --bg2:      #F8F2E8;
+      --bg3:      #F2E8D8;
+      --border:   rgba(180,140,100,0.18);
+      --border2:  rgba(180,140,100,0.28);
+
+      --text:     #28180A;
+      --mid:      #6B4C2A;
+      --low:      #9E7B55;
+      --vlow:     #C8A882;
+
+      --serif:    'DM Serif Display', Georgia, serif;
+      --italic:   'Cormorant Garamond', Georgia, serif;
+      --sans:     'DM Sans', system-ui, sans-serif;
+
+      /* playful accent colors */
+      --teal:     #0D9488;
+      --teal-l:   rgba(13,148,136,0.1);
+      --purple:   #7C3AED;
+      --purple-l: rgba(124,58,237,0.1);
+      --rose:     #E11D48;
+      --rose-l:   rgba(225,29,72,0.1);
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { overflow-x: hidden; scroll-behavior: smooth; }
+    body { font-family: var(--sans); background: var(--bg); color: var(--text); overflow-x: hidden; }
+
+    ::-webkit-scrollbar { width: 3px; }
+    ::-webkit-scrollbar-track { background: var(--bg); }
+    ::-webkit-scrollbar-thumb { background: var(--orange); border-radius: 2px; }
+
+    /* ═══════════════════════════
+       INTRO
+    ═══════════════════════════ */
+    #intro {
+      position: fixed; inset: 0; z-index: 1000;
+      background: var(--text);
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      gap: 0.4rem;
+    }
+    .i-line {
+      font-family: var(--sans); font-size: clamp(1.1rem, 2.4vw, 1.6rem);
+      font-weight: 300; letter-spacing: 0.05em;
+      color: rgba(253,250,244,0.22);
+      display: flex; align-items: center; height: 2em;
+    }
+    .i-line span.txt { transition: color 0.35s; }
+    .i-line.done span.txt { color: rgba(253,250,244,0.45); }
+    .i-cursor {
+      display: inline-block; width: 2px; height: 1em;
+      background: var(--orange); margin-left: 2px;
+      animation: blink 0.7s step-end infinite; vertical-align: middle;
+    }
+    @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0} }
+    .i-final {
+      font-family: var(--serif); font-size: clamp(2.2rem, 5vw, 4.5rem);
+      font-style: italic; color: var(--orange);
+      margin-top: 1.5rem;
+      opacity: 0; transform: translateY(10px);
+      transition: opacity 0.6s, transform 0.6s;
+    }
+    .i-final.show { opacity: 1; transform: none; }
+    #intro.exit { animation: introExit 0.7s cubic-bezier(0.76,0,0.24,1) forwards; }
+    @keyframes introExit { to { transform: translateY(-100%); } }
+
+    /* ═══════════════════════════
+       NAV
+    ═══════════════════════════ */
+    nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 500;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 1.35rem 3.5rem;
+      opacity: 0; transition: opacity 0.5s, background 0.35s, padding 0.3s;
+    }
+    nav.show { opacity: 1; }
+    nav.solid { background: rgba(253,250,244,0.92); backdrop-filter: blur(16px); border-bottom: 1px solid var(--border); padding: 0.9rem 3.5rem; }
+    .nav-logo { font-family: var(--serif); font-size: 1.15rem; color: var(--text); text-decoration: none; font-style: italic; }
+    .nav-logo b { font-style: normal; color: var(--orange); font-weight: 400; }
+    .nav-links { display: flex; gap: 2.5rem; list-style: none; align-items: center; }
+    .nav-links a { font-size: 0.72rem; font-weight: 500; letter-spacing: 0.1em; text-transform: uppercase; color: var(--mid); text-decoration: none; transition: color 0.2s; }
+    .nav-links a:hover { color: var(--orange); }
+    .nav-cta { background: var(--orange) !important; color: #fff !important; padding: 0.5rem 1.35rem; border-radius: 2rem; font-weight: 700 !important; }
+    .nav-cta:hover { opacity: 0.85; }
+
+    /* ═══════════════════════════
+       HERO
+    ═══════════════════════════ */
+    #hero {
+      min-height: 100vh;
+      display: grid; grid-template-columns: 55% 45%;
+      background: var(--bg);
+      position: relative;
+    }
+
+    .hero-l {
+      display: flex; flex-direction: column; justify-content: center;
+      padding: 9rem 4rem 6rem 5rem; position: relative;
+    }
+
+    /* giant background word */
+    .hero-bgword {
+      position: absolute; bottom: -0.1em; left: -0.02em;
+      font-family: var(--serif); font-size: clamp(11rem, 20vw, 24rem);
+      font-weight: 400; line-height: 1; letter-spacing: -0.04em;
+      color: transparent;
+      -webkit-text-stroke: 1px rgba(232,98,42,0.1);
+      user-select: none; pointer-events: none; white-space: nowrap;
+      will-change: transform;
+    }
+
+    .hero-tag {
+      display: inline-flex; align-items: center; gap: 0.6rem;
+      background: var(--ol); border: 1px solid rgba(232,98,42,0.2);
+      padding: 0.38rem 0.9rem; border-radius: 2rem;
+      font-size: 0.65rem; font-weight: 700; letter-spacing: 0.14em;
+      text-transform: uppercase; color: var(--orange);
+      margin-bottom: 2rem; position: relative; z-index: 2;
+    }
+    .tag-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--orange); animation: tagPulse 2s ease-in-out infinite; }
+    @keyframes tagPulse { 0%,100%{transform:scale(1);opacity:1} 50%{transform:scale(1.5);opacity:0.5} }
+
+    .hero-title {
+      font-family: var(--serif);
+      font-size: clamp(3.5rem, 6.5vw, 7.5rem);
+      line-height: 0.92; letter-spacing: -0.025em;
+      color: var(--text); margin-bottom: 1.75rem;
+      position: relative; z-index: 2;
+    }
+    .hero-title em { font-style: italic; color: var(--orange); display: block; }
+
+    .hero-sub {
+      font-size: 1rem; line-height: 1.8; color: var(--mid);
+      max-width: 40ch; margin-bottom: 3rem; font-weight: 300;
+      position: relative; z-index: 2;
+    }
+
+    .hero-btns { display: flex; gap: 0.75rem; position: relative; z-index: 2; margin-bottom: 3.5rem; }
+    .btn-fill { background: var(--orange); color: #fff; padding: 0.9rem 2rem; border-radius: 0.4rem; font-size: 0.82rem; font-weight: 700; text-decoration: none; transition: background 0.2s, transform 0.2s; box-shadow: 0 4px 20px rgba(232,98,42,0.28); }
+    .btn-fill:hover { background: var(--orange2); transform: translateY(-2px); }
+    .btn-line { color: var(--mid); padding: 0.9rem 2rem; border-radius: 0.4rem; font-size: 0.82rem; font-weight: 600; text-decoration: none; border: 1.5px solid var(--border2); transition: border-color 0.2s, color 0.2s; }
+    .btn-line:hover { border-color: var(--orange); color: var(--orange); }
+
+    /* stats */
+    .hero-stats { display: flex; gap: 0; border-top: 1px solid var(--border); padding-top: 2rem; position: relative; z-index: 2; }
+    .h-stat { flex: 1; }
+    .h-stat:not(:last-child) { border-right: 1px solid var(--border); margin-right: 2rem; padding-right: 2rem; }
+    .h-num { font-family: var(--serif); font-size: 2.2rem; color: var(--orange); line-height: 1; }
+    .h-lbl { font-size: 0.6rem; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: var(--vlow); margin-top: 0.2rem; }
+
+    /* hero right */
+    .hero-r {
+      background: var(--bg2); position: relative;
+      display: flex; flex-direction: column; overflow: hidden;
+    }
+    .hero-photo-zone {
+      flex: 1; background: var(--bg3);
+      display: flex; align-items: center; justify-content: center;
+      position: relative; overflow: hidden; min-height: 300px;
+    }
+    .hero-photo-zone::after {
+      content: ''; position: absolute; bottom: 0; left: 0; right: 0;
+      height: 80px; background: linear-gradient(to bottom, transparent, var(--bg2));
+    }
+    .hero-init-text { font-family: var(--serif); font-size: 16rem; font-weight: 400; font-style: italic; color: rgba(232,98,42,0.08); user-select: none; mask-image: linear-gradient(to top, transparent 0%, black 35%); -webkit-mask-image: linear-gradient(to top, transparent 0%, black 35%); }
+    /* HERO PHOTO: replace .hero-photo-zone content with <img src="dearly.jpg" style="width:100%;height:100%;object-fit:cover;object-position:top center;" /> */
+
+    .hero-cards { padding: 1.5rem; display: grid; grid-template-columns: 1fr 1fr; gap: 0.65rem; }
+    .h-card { background: #fff; border-radius: 0.85rem; padding: 0.9rem 1rem; box-shadow: 0 2px 12px rgba(40,24,10,0.07); animation: floatUp 4s ease-in-out infinite; }
+    .h-card:nth-child(2){ animation-delay:-1.3s; }
+    .h-card:nth-child(3){ animation-delay:-2.6s; }
+    .h-card:nth-child(4){ animation-delay:-0.9s; }
+    @keyframes floatUp { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-5px)} }
+    .hc-ico { font-size: 1.1rem; margin-bottom: 0.35rem; }
+    .hc-lbl { font-size: 0.58rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; color: var(--vlow); }
+    .hc-val { font-size: 0.82rem; font-weight: 600; color: var(--text); margin-top: 0.1rem; }
+    .hc-badge { display: inline-flex; align-items: center; gap: 0.25rem; margin-top: 0.3rem; font-size: 0.58rem; font-weight: 700; padding: 0.12rem 0.5rem; border-radius: 2rem; background: var(--ol); color: var(--orange); }
+
+    /* scroll cue */
+    .scroll-cue { position: absolute; bottom: 2rem; left: 5rem; z-index: 10; display: flex; align-items: center; gap: 0.5rem; }
+    .sc-line { width: 1px; height: 36px; background: linear-gradient(to bottom, var(--orange), transparent); animation: scDrop 2s ease-in-out infinite; }
+    @keyframes scDrop { 0%,100%{transform:scaleY(0);transform-origin:top} 60%{transform:scaleY(1);transform-origin:top} }
+    .sc-txt { font-size: 0.57rem; letter-spacing: 0.18em; text-transform: uppercase; color: var(--vlow); writing-mode: vertical-lr; }
+
+    /* ═══════════════════════════
+       MARQUEE
+    ═══════════════════════════ */
+    .marquee-bar { background: var(--orange); overflow: hidden; padding: 0.7rem 0; }
+    .m-track { display: flex; width: max-content; animation: mq 22s linear infinite; }
+    .m-track:hover { animation-play-state: paused; }
+    @keyframes mq { from{transform:translateX(0)} to{transform:translateX(-50%)} }
+    .m-item { display: inline-flex; align-items: center; gap: 0.75rem; padding: 0 2rem; white-space: nowrap; font-family: var(--serif); font-size: 0.92rem; font-style: italic; color: rgba(253,250,244,0.78); }
+    .m-sep { width: 4px; height: 4px; border-radius: 50%; background: rgba(253,250,244,0.4); flex-shrink: 0; }
+
+    /* ═══════════════════════════
+       SHARED SECTION STYLES
+    ═══════════════════════════ */
+    .section-pad { padding: 7rem 5rem; }
+    .eyebrow { font-size: 0.62rem; font-weight: 700; letter-spacing: 0.22em; text-transform: uppercase; color: var(--orange); display: flex; align-items: center; gap: 0.65rem; margin-bottom: 1rem; }
+    .eyebrow::before { content: ''; width: 1.5rem; height: 1.5px; background: var(--orange); }
+    .sec-h { font-family: var(--serif); font-size: clamp(2.4rem, 4vw, 4rem); color: var(--text); line-height: 0.98; letter-spacing: -0.02em; }
+    .sec-h em { font-style: italic; color: var(--orange); }
+
+    /* reveal */
+    .reveal { opacity: 0; transform: translateY(28px); transition: opacity 0.65s ease, transform 0.65s ease; }
+    .reveal.vis { opacity: 1; transform: none; }
+
+    /* ═══════════════════════════
+       SERVICES — 3-col grid, click to expand
+    ═══════════════════════════ */
+    #services { background: var(--bg2); }
+
+    .svc-header { display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 4rem; flex-wrap: wrap; gap: 2rem; }
+    .svc-header-sub { font-size: 0.92rem; color: var(--mid); line-height: 1.75; max-width: 36ch; font-weight: 300; }
+
+    .services-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5rem; }
+
+    .service-card {
+      background: var(--bg);
+      border-radius: 1.5rem;
+      padding: 2rem;
+      cursor: pointer;
+      position: relative;
+      overflow: hidden;
+      transition: transform 0.3s, box-shadow 0.3s, background 0.3s;
+      border: 1.5px solid transparent;
+    }
+    .service-card::before {
+      content: '';
+      position: absolute; inset: 0;
+      border-radius: inherit;
+      border: 1.5px solid transparent;
+      transition: border-color 0.3s;
+      pointer-events: none;
+    }
+    .service-card:hover { transform: translateY(-6px); box-shadow: 0 20px 50px rgba(40,24,10,0.1); }
+    .service-card:hover::before { border-color: var(--orange); }
+    .service-card.active { background: var(--text); }
+    .service-card.active .service-number,
+    .service-card.active .service-title,
+    .service-card.active .service-desc { color: rgba(253,250,244,0.85); }
+    .service-card.active .service-icon-wrap { background: rgba(255,255,255,0.1); }
+
+    .service-icon-wrap {
+      width: 3.5rem; height: 3.5rem;
+      background: var(--bg3);
+      border-radius: 1rem;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.5rem;
+      margin-bottom: 1.5rem;
+      transition: background 0.3s;
+    }
+    .service-number {
+      font-size: 0.7rem; font-weight: 600;
+      letter-spacing: 0.15em; text-transform: uppercase;
+      color: var(--low); margin-bottom: 0.5rem;
+      transition: color 0.3s;
+    }
+    .service-title {
+      font-family: var(--serif); font-size: 1.35rem;
+      color: var(--text); margin-bottom: 0.75rem; line-height: 1.2;
+      transition: color 0.3s;
+    }
+    .service-desc {
+      font-size: 0.85rem; line-height: 1.65;
+      color: var(--mid); transition: color 0.3s;
+    }
+    .service-detail {
+      margin-top: 1.25rem; padding-top: 1.25rem;
+      border-top: 1px solid rgba(255,255,255,0.15);
+      display: none;
+    }
+    .service-card.active .service-detail { display: block; }
+    .service-task-list { list-style: none; }
+    .service-task-list li {
+      display: flex; align-items: flex-start; gap: 0.6rem;
+      font-size: 0.8rem; color: rgba(253,250,244,0.8);
+      padding: 0.3rem 0; line-height: 1.45;
+    }
+    .service-task-list li::before { content: '\2192'; color: var(--orange); flex-shrink: 0; margin-top: 0.05rem; }
+    .service-tools { margin-top: 1rem; display: flex; flex-wrap: wrap; gap: 0.4rem; }
+    .service-tool-tag {
+      background: rgba(255,255,255,0.12); color: rgba(253,250,244,0.8);
+      font-size: 0.68rem; padding: 0.25rem 0.6rem;
+      border-radius: 2rem; letter-spacing: 0.05em;
+    }
+
+    /* ═══════════════════════════
+       ABOUT — orange left, light right
+    ═══════════════════════════ */
+    #about { min-height: 100vh; display: grid; grid-template-columns: 1fr 1fr; }
+    .about-l {
+      background: var(--orange); padding: 7rem 4rem;
+      display: flex; flex-direction: column; justify-content: center;
+      position: relative; overflow: hidden;
+    }
+    .about-l::before { content: ''; position: absolute; bottom: -12rem; right: -12rem; width: 36rem; height: 36rem; border-radius: 50%; border: 1px solid rgba(255,255,255,0.12); pointer-events: none; }
+    .about-l::after  { content: ''; position: absolute; bottom: -8rem;  right: -8rem;  width: 24rem; height: 24rem; border-radius: 50%; border: 1px solid rgba(255,255,255,0.08); pointer-events: none; }
+    .about-ey { font-size: 0.62rem; font-weight: 700; letter-spacing: 0.22em; text-transform: uppercase; color: rgba(255,255,255,0.55); display: flex; align-items: center; gap: 0.65rem; margin-bottom: 2rem; }
+    .about-ey::before { content: ''; width: 1.5rem; height: 1px; background: rgba(255,255,255,0.45); }
+    .about-quote { font-family: var(--serif); font-size: clamp(1.8rem, 3.2vw, 3rem); color: #fff; line-height: 1.15; letter-spacing: -0.015em; margin-bottom: 2.5rem; position: relative; z-index: 1; }
+    .about-quote em { font-style: italic; color: rgba(255,255,255,0.65); }
+    .about-sig { font-size: 0.72rem; font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase; color: rgba(255,255,255,0.5); display: flex; align-items: center; gap: 0.6rem; position: relative; z-index: 1; }
+    .about-sig::before { content: ''; width: 1.5rem; height: 1px; background: rgba(255,255,255,0.35); }
+    .about-stats { display: flex; gap: 2.5rem; margin-top: 3rem; padding-top: 2.5rem; border-top: 1px solid rgba(255,255,255,0.18); position: relative; z-index: 1; }
+    .as-num { font-family: var(--serif); font-size: 2.4rem; color: #fff; line-height: 1; }
+    .as-lbl { font-size: 0.6rem; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: rgba(255,255,255,0.5); margin-top: 0.2rem; }
+
+    .about-r { background: var(--bg); display: flex; flex-direction: column; }
+    .about-photo-wrap { flex: 1; min-height: 280px; background: var(--bg3); position: relative; display: flex; align-items: center; justify-content: center; overflow: hidden; }
+    .about-photo-init { font-family: var(--serif); font-size: 16rem; font-weight: 400; font-style: italic; color: rgba(232,98,42,0.08); user-select: none; mask-image: linear-gradient(to top, transparent 0%, black 30%); -webkit-mask-image: linear-gradient(to top, transparent 0%, black 30%); }
+    /* ABOUT PHOTO: replace .about-photo-wrap content with <img src="dearly.jpg" style="width:100%;height:100%;object-fit:cover;object-position:top center;" /> */
+    .about-strip { position: absolute; bottom: 0; left: 0; right: 0; height: 3px; background: linear-gradient(90deg, var(--orange), transparent); }
+    .about-details { padding: 2.5rem 3rem; }
+    .about-badges { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.65rem; margin-bottom: 2rem; }
+    .ab-badge { background: var(--bg2); border: 1px solid var(--border); border-radius: 0.75rem; padding: 0.9rem 1rem; }
+    .ab-val { font-family: var(--serif); font-size: 1.6rem; color: var(--orange); line-height: 1; }
+    .ab-key { font-size: 0.58rem; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--vlow); margin-top: 0.18rem; }
+    .about-body { font-size: 0.88rem; line-height: 1.82; color: var(--mid); margin-bottom: 2.5rem; }
+    .tl { border-left: 1.5px solid var(--border); padding-left: 1.75rem; }
+    .tl-item { position: relative; margin-bottom: 1.5rem; opacity: 0; transform: translateX(-8px); transition: opacity 0.5s, transform 0.5s; }
+    .tl-item.vis { opacity: 1; transform: none; }
+    .tl-dot { position: absolute; left: -2.3rem; top: 0.3rem; width: 0.65rem; height: 0.65rem; border-radius: 50%; background: var(--orange); border: 2px solid var(--bg); }
+    .tl-date { font-size: 0.6rem; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: var(--orange); }
+    .tl-role { font-family: var(--serif); font-size: 0.95rem; color: var(--text); margin: 0.18rem 0 0.2rem; }
+    .tl-desc { font-size: 0.75rem; color: var(--low); line-height: 1.45; }
+
+    /* ═══════════════════════════
+       EXPERIENCE — light section
+    ═══════════════════════════ */
+    #experience { background: var(--bg2); }
+    .exp-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1px; background: var(--border); border: 1px solid var(--border); border-radius: 1.25rem; overflow: hidden; margin-top: 3.5rem; }
+    .exp-card { background: var(--bg); padding: 2.25rem; position: relative; overflow: hidden; opacity: 0; transform: translateY(16px); transition: opacity 0.55s, transform 0.55s, background 0.2s; }
+    .exp-card.vis { opacity: 1; transform: none; }
+    .exp-card:hover { background: var(--bg2); }
+    .exp-card::after { content: attr(data-n); position: absolute; bottom: 1rem; right: 1.25rem; font-family: var(--italic); font-size: 5rem; font-weight: 300; font-style: italic; color: rgba(232,98,42,0.07); line-height: 1; user-select: none; }
+    .exp-top { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 1rem; flex-wrap: wrap; gap: 0.6rem; }
+    .exp-co { font-family: var(--serif); font-size: 1.1rem; color: var(--text); }
+    .exp-role { font-size: 0.6rem; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--orange); margin-top: 0.2rem; }
+    .exp-period { font-size: 0.6rem; color: var(--low); background: var(--bg2); padding: 0.2rem 0.65rem; border-radius: 2rem; white-space: nowrap; border: 1px solid var(--border); }
+    .exp-desc { font-size: 0.8rem; line-height: 1.72; color: var(--mid); }
+    .exp-tags { display: flex; flex-wrap: wrap; gap: 0.3rem; margin-top: 1rem; }
+    .exp-tag { font-size: 0.58rem; font-weight: 700; padding: 0.15rem 0.5rem; border-radius: 2rem; background: var(--ol); color: var(--orange); border: 1px solid rgba(232,98,42,0.2); text-transform: uppercase; letter-spacing: 0.04em; }
+
+    /* awards */
+    .aw-row { margin-top: 2.5rem; display: grid; grid-template-columns: repeat(3, 1fr); gap: 1px; background: var(--border); border: 1px solid var(--border); border-radius: 0.85rem; overflow: hidden; }
+    .aw { background: var(--bg); padding: 1.5rem; transition: background 0.2s; }
+    .aw:hover { background: var(--bg2); }
+    .aw-ico { font-size: 1.4rem; margin-bottom: 0.7rem; }
+    .aw-title { font-family: var(--serif); font-size: 0.85rem; color: var(--text); line-height: 1.3; margin-bottom: 0.35rem; }
+    .aw-org { font-size: 0.7rem; color: var(--low); }
+    .aw-yr { display: inline-block; margin-top: 0.6rem; font-size: 0.58rem; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: var(--orange); border: 1px solid rgba(232,98,42,0.25); padding: 0.12rem 0.5rem; border-radius: 2rem; }
+
+    /* ═══════════════════════════
+       WORKS — light, flip cards
+    ═══════════════════════════ */
+    #works { background: var(--bg3); }
+    .works-head { display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 3rem; flex-wrap: wrap; gap: 2rem; }
+    .works-sub { font-size: 0.85rem; color: var(--mid); line-height: 1.75; max-width: 30ch; font-weight: 300; text-align: right; }
+
+    .work-tabs { display: flex; gap: 0.4rem; margin-bottom: 2.5rem; flex-wrap: wrap; }
+    .w-tab { padding: 0.5rem 1.1rem; border-radius: 2rem; font-size: 0.72rem; font-weight: 600; cursor: pointer; border: 1.5px solid var(--border2); color: var(--mid); background: transparent; transition: all 0.2s; }
+    .w-tab:hover { border-color: var(--orange); color: var(--orange); }
+    .w-tab.on { background: var(--orange); border-color: var(--orange); color: #fff; font-weight: 700; }
+
+    .works-grid { display: grid; grid-template-columns: 1.2fr 0.8fr; gap: 1.5rem; align-items: start; }
+
+    /* flip */
+    .flip-wrap { perspective: 900px; }
+    .flip-inner { position: relative; transform-style: preserve-3d; transition: transform 0.65s cubic-bezier(0.4,0,0.2,1); width: 100%; min-height: 500px; }
+    .flip-wrap.flipped .flip-inner { transform: rotateY(180deg); }
+    .flip-f, .flip-b { position: absolute; inset: 0; backface-visibility: hidden; -webkit-backface-visibility: hidden; border-radius: 1rem; overflow: hidden; }
+    .flip-f { background: var(--bg); border: 1.5px solid var(--border); }
+    .flip-b { background: var(--orange); transform: rotateY(180deg); display: flex; flex-direction: column; justify-content: center; padding: 2.5rem; }
+    .fb-title { font-family: var(--serif); font-size: 1.7rem; color: #fff; line-height: 1.1; margin-bottom: 0.85rem; }
+    .fb-desc { font-size: 0.82rem; color: rgba(255,255,255,0.78); line-height: 1.72; margin-bottom: 1.5rem; }
+    .fb-ul { list-style: none; }
+    .fb-ul li { display: flex; align-items: flex-start; gap: 0.5rem; font-size: 0.78rem; color: rgba(255,255,255,0.88); padding: 0.3rem 0; border-top: 1px solid rgba(255,255,255,0.15); }
+    .fb-ul li::before { content: '\2713'; color: #fff; flex-shrink: 0; font-weight: 700; }
+    .fb-back { margin-top: 1.5rem; font-size: 0.62rem; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: rgba(255,255,255,0.6); cursor: pointer; display: flex; align-items: center; gap: 0.4rem; }
+    .fb-back::before { content: '↩'; font-size: 0.85rem; }
+
+    .demo-pad { padding: 1.75rem; overflow-y: auto; max-height: 500px; }
+    .demo-lbl { font-size: 0.6rem; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; color: var(--orange); margin-bottom: 0.65rem; }
+    .flip-trigger-row { display: flex; justify-content: flex-end; margin-bottom: 0.85rem; }
+    .flip-trig { font-size: 0.6rem; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--low); cursor: pointer; display: flex; align-items: center; gap: 0.35rem; transition: color 0.2s; }
+    .flip-trig:hover { color: var(--orange); }
+    .flip-trig::after { content: '↻'; font-size: 0.85rem; }
+
+    /* info panel */
+    .works-info { background: var(--bg); border: 1.5px solid var(--border); border-radius: 1rem; padding: 2rem; }
+    .wi-icon { font-size: 2rem; margin-bottom: 0.85rem; }
+    .wi-title { font-family: var(--serif); font-size: 1.6rem; color: var(--text); line-height: 1.1; margin-bottom: 0.65rem; }
+    .wi-desc { font-size: 0.85rem; color: var(--mid); line-height: 1.75; margin-bottom: 1.5rem; }
+    .wi-ul { list-style: none; }
+    .wi-ul li { display: flex; align-items: center; gap: 0.5rem; font-size: 0.78rem; color: var(--mid); padding: 0.32rem 0; border-top: 1px solid var(--border); }
+    .wi-ul li::before { content: '\2713'; color: var(--orange); flex-shrink: 0; font-weight: 700; }
+
+    /* demo sub-components */
+    .ed { background: var(--bg2); border-radius: 0.6rem; border: 1px solid var(--border); overflow: hidden; }
+    .ed-hdr { padding: 0.6rem 1rem; border-bottom: 1px solid var(--border); display: flex; gap: 1rem; }
+    .ed-tab { font-size: 0.62rem; letter-spacing: 0.08em; color: var(--low); text-transform: uppercase; cursor: pointer; padding-bottom: 0.15rem; }
+    .ed-tab.on { color: var(--orange); border-bottom: 1.5px solid var(--orange); }
+    .e-row { display: grid; grid-template-columns: auto 1fr auto; align-items: center; gap: 0.6rem; padding: 0.55rem 1rem; border-bottom: 1px solid rgba(40,24,10,0.05); cursor: pointer; transition: background 0.15s; }
+    .e-row:hover { background: rgba(40,24,10,0.03); }
+    .e-row:last-child { border-bottom: none; }
+    .e-dot { width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0; }
+    .e-from { font-size: 0.7rem; color: var(--text); font-weight: 500; }
+    .e-subj { font-size: 0.62rem; color: var(--low); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .e-badge { font-size: 0.55rem; font-weight: 700; padding: 0.08rem 0.42rem; border-radius: 2rem; }
+
+    .cal-hdr { display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.75rem; }
+    .cal-mo { font-family: var(--serif); font-size: 0.9rem; color: var(--text); }
+    .cal-nav { display: flex; gap: 0.35rem; }
+    .cal-nb { width: 1.5rem; height: 1.5rem; border-radius: 50%; background: var(--bg2); border: none; cursor: pointer; color: var(--mid); font-size: 0.7rem; display: flex; align-items: center; justify-content: center; transition: background 0.2s; }
+    .cal-nb:hover { background: var(--ol); color: var(--orange); }
+    .cal-g { display: grid; grid-template-columns: repeat(7, 1fr); gap: 1px; }
+    .cal-dn { font-size: 0.5rem; text-align: center; color: var(--low); letter-spacing: 0.06em; text-transform: uppercase; padding: 0.2rem 0; }
+    .cal-d { width: 100%; aspect-ratio: 1; border-radius: 0.3rem; display: flex; align-items: center; justify-content: center; font-size: 0.62rem; color: var(--mid); cursor: pointer; transition: background 0.15s; }
+    .cal-d:hover { background: var(--ol2); }
+    .cal-d.today { background: var(--orange); color: #fff; font-weight: 700; }
+    .cal-d.ev { color: var(--text); position: relative; }
+    .cal-d.ev::after { content: ''; display: block; width: 3px; height: 3px; background: var(--orange); border-radius: 50%; position: absolute; bottom: 2px; }
+    .cal-d.oth { opacity: 0.2; }
+    .cal-ev-list { margin-top: 0.75rem; }
+    .cal-ev-item { display: flex; align-items: center; gap: 0.45rem; padding: 0.35rem 0; border-top: 1px solid var(--border); font-size: 0.65rem; }
+    .cal-ev-dot { width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0; }
+    .cal-ev-t { color: var(--low); white-space: nowrap; }
+    .cal-ev-n { color: var(--text); }
+
+    .gd-srch { display: flex; align-items: center; gap: 0.45rem; background: var(--bg2); border-radius: 0.4rem; padding: 0.4rem 0.65rem; margin-bottom: 0.75rem; border: 1px solid var(--border); }
+    .gd-srch input { background: none; border: none; outline: none; font-size: 0.7rem; color: var(--mid); font-family: var(--sans); width: 100%; }
+    .f-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 0.5rem; }
+    .f-item { background: var(--bg2); border: 1px solid var(--border); border-radius: 0.6rem; padding: 0.6rem 0.75rem; display: flex; align-items: center; gap: 0.45rem; cursor: pointer; transition: background 0.15s, border-color 0.15s; }
+    .f-item:hover { background: var(--ol); border-color: rgba(232,98,42,0.3); }
+    .f-ico { font-size: 1rem; }
+    .f-name { font-size: 0.67rem; color: var(--mid); }
+    .f-sz { font-size: 0.56rem; color: var(--low); }
+
+    .kb-cols { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.6rem; }
+    .kb-hdr { font-size: 0.56rem; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; padding: 0.3rem 0; margin-bottom: 0.35rem; }
+    .kb-card { background: var(--bg2); border-radius: 0.4rem; padding: 0.55rem 0.65rem; margin-bottom: 0.35rem; font-size: 0.65rem; color: var(--mid); border: 1px solid var(--border); cursor: pointer; transition: background 0.15s, border-color 0.15s; line-height: 1.35; }
+    .kb-card:hover { background: var(--ol); border-color: rgba(232,98,42,0.25); }
+    .kb-plat { margin-top: 0.35rem; font-size: 0.55rem; color: var(--low); }
+
+    .emt { background: var(--bg2); border-radius: 0.6rem; overflow: hidden; border: 1px solid var(--border); }
+    .emt-top { padding: 0.85rem 1.1rem; border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; }
+    .emt-subj { font-size: 0.72rem; color: var(--text); font-weight: 600; }
+    .emt-rate { font-size: 0.6rem; color: var(--orange); background: var(--ol); padding: 0.15rem 0.5rem; border-radius: 2rem; }
+    .emt-body { padding: 1.1rem; }
+    .emt-hero-blk { height: 65px; background: linear-gradient(135deg, var(--ol), rgba(40,24,10,0.04)); border-radius: 0.4rem; display: flex; align-items: center; justify-content: center; font-size: 1.3rem; margin-bottom: 0.75rem; }
+    .emt-line { height: 6px; background: var(--border); border-radius: 3px; margin-bottom: 0.35rem; }
+    .emt-line.sh { width: 60%; }
+    .emt-cta { margin-top: 0.75rem; background: var(--orange); color: #fff; text-align: center; font-size: 0.67rem; font-weight: 700; padding: 0.5rem; border-radius: 0.3rem; letter-spacing: 0.06em; text-transform: uppercase; cursor: pointer; transition: opacity 0.2s; }
+    .emt-cta:hover { opacity: 0.85; }
+
+    /* ═══════════════════════════
+       TOOLS
+    ═══════════════════════════ */
+    #tools { background: var(--bg); }
+    .tool-cats { margin-top: 3.5rem; display: flex; flex-direction: column; gap: 2.5rem; }
+    .tc-lbl { font-size: 0.6rem; font-weight: 700; letter-spacing: 0.18em; text-transform: uppercase; color: var(--vlow); margin-bottom: 0.85rem; }
+    .tc-row { display: flex; flex-wrap: wrap; gap: 0.5rem; }
+    .t-chip { display: flex; align-items: center; gap: 0.4rem; background: var(--bg); border: 1.5px solid var(--border); padding: 0.5rem 1.05rem; border-radius: 2rem; font-size: 0.78rem; font-weight: 500; color: var(--mid); transition: all 0.2s; cursor: default; }
+    .t-chip:hover { border-color: var(--orange); color: var(--orange); transform: translateY(-2px); box-shadow: 0 4px 14px rgba(232,98,42,0.12); }
+
+    /* ═══════════════════════════
+       CONTACT
+    ═══════════════════════════ */
+    #contact { background: var(--orange); padding: 9rem 4rem; text-align: center; position: relative; overflow: hidden; min-height: 90vh; display: flex; align-items: center; justify-content: center; }
+    #contact::before { content: ''; position: absolute; top: -20rem; right: -20rem; width: 60rem; height: 60rem; border-radius: 50%; border: 1px solid rgba(255,255,255,0.1); pointer-events: none; }
+    #contact::after  { content: ''; position: absolute; bottom: -15rem; left: -15rem; width: 40rem; height: 40rem; border-radius: 50%; border: 1px solid rgba(255,255,255,0.07); pointer-events: none; }
+    .contact-inner { position: relative; z-index: 1; max-width: 680px; width: 100%; }
+    .c-ey { font-size: 0.62rem; font-weight: 700; letter-spacing: 0.22em; text-transform: uppercase; color: rgba(255,255,255,0.55); display: flex; align-items: center; justify-content: center; gap: 0.65rem; margin-bottom: 1.5rem; }
+    .c-ey::before { content: ''; width: 1.5rem; height: 1px; background: rgba(255,255,255,0.4); }
+    .c-title { font-family: var(--serif); font-size: clamp(3rem, 7vw, 7rem); color: #fff; line-height: 0.92; letter-spacing: -0.03em; margin-bottom: 1.25rem; }
+    .c-title em { font-style: italic; color: rgba(255,255,255,0.65); }
+    .c-sub { font-size: 1rem; color: rgba(255,255,255,0.7); line-height: 1.78; margin-bottom: 3.5rem; font-weight: 300; }
+    .c-links { display: flex; flex-wrap: wrap; justify-content: center; gap: 0.75rem; margin-bottom: 2rem; }
+    .c-btn { display: flex; align-items: center; gap: 0.5rem; padding: 0.9rem 2rem; border-radius: 0.4rem; font-size: 0.82rem; font-weight: 700; text-decoration: none; transition: all 0.2s; }
+    .c-btn.w { background: #fff; color: var(--orange); }
+    .c-btn.w:hover { transform: translateY(-2px); box-shadow: 0 8px 28px rgba(40,24,10,0.15); }
+    .c-btn.g { background: transparent; color: #fff; border: 2px solid rgba(255,255,255,0.35); }
+    .c-btn.g:hover { border-color: #fff; background: rgba(255,255,255,0.1); }
+    .c-social { display: flex; justify-content: center; gap: 2rem; font-size: 0.72rem; font-weight: 600; }
+    .c-social a { color: rgba(255,255,255,0.5); text-decoration: none; transition: color 0.2s; }
+    .c-social a:hover { color: #fff; }
+
+    footer { background: var(--text); color: rgba(253,250,244,0.25); text-align: center; padding: 1.5rem; font-size: 0.7rem; }
+    footer span { color: var(--orange); }
+
+    @media (max-width: 1024px) {
+      #hero { grid-template-columns: 1fr; }
+      .hero-l { min-height: 100vh; }
+      .hero-r { display: none; }
+      #about { grid-template-columns: 1fr; }
+      .about-l { min-height: 50vh; }
+      .works-grid { grid-template-columns: 1fr; }
+      .services-grid { grid-template-columns: repeat(2, 1fr); }
+      .section-pad { padding: 5rem 3rem; }
+    }
+    @media (max-width: 768px) {
+      nav { padding: 1rem 1.5rem; }
+      nav.solid { padding: 0.75rem 1.5rem; }
+      .nav-links { display: none; }
+      .section-pad { padding: 4rem 1.5rem; }
+      .exp-grid { grid-template-columns: 1fr; }
+      .aw-row { grid-template-columns: 1fr; }
+      .services-grid { grid-template-columns: 1fr; }
+      #contact { padding: 5rem 1.5rem; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- INTRO -->
+<div id="intro">
+  <div class="i-line" id="il0"><span class="txt" id="it0"></span><span class="i-cursor" id="ic0"></span></div>
+  <div class="i-line" id="il1"><span class="txt" id="it1"></span><span class="i-cursor" id="ic1" style="display:none"></span></div>
+  <div class="i-line" id="il2"><span class="txt" id="it2"></span><span class="i-cursor" id="ic2" style="display:none"></span></div>
+  <div class="i-line" id="il3"><span class="txt" id="it3"></span><span class="i-cursor" id="ic3" style="display:none"></span></div>
+  <div class="i-final" id="iFinal">Dearly Ayu</div>
+</div>
+
+<!-- NAV -->
+<nav id="nav">
+  <a href="#" class="nav-logo">Dearly <b>Ayu</b></a>
+  <ul class="nav-links">
+    <li><a href="#services">Services</a></li>
+    <li><a href="#about">About</a></li>
+    <li><a href="#experience">Experience</a></li>
+    <li><a href="#works">Works</a></li>
+    <li><a href="#contact" class="nav-cta">Hire Me</a></li>
+  </ul>
+</nav>
+
+<!-- HERO -->
+<section id="hero">
+  <div class="hero-l">
+    <div class="hero-bgword" id="heroBg">HANDLED.</div>
+    <div class="hero-tag"><div class="tag-dot"></div> Virtual Assistant for Entrepreneurs</div>
+    <h1 class="hero-title">Your business,<br><em>handled.</em></h1>
+    <p class="hero-sub">I take the day-to-day off your plate — inbox, content, social media, and everything in between — so you can focus on what actually moves things forward.</p>
+    <div class="hero-btns">
+      <a href="#contact" class="btn-fill">Work With Me</a>
+      <a href="#works" class="btn-line">See My Work</a>
+    </div>
+    <div class="hero-stats">
+      <div class="h-stat"><div class="h-num">6+</div><div class="h-lbl">Brands Managed</div></div>
+      <div class="h-stat"><div class="h-num">27x</div><div class="h-lbl">TikTok Impressions</div></div>
+      <div class="h-stat"><div class="h-num">60%</div><div class="h-lbl">Engagement Lift</div></div>
+    </div>
+    <div class="scroll-cue"><div class="sc-line"></div><div class="sc-txt">scroll</div></div>
+  </div>
+  <div class="hero-r">
+    <div class="hero-photo-zone"><div class="hero-init-text">DA</div></div>
+    <div class="hero-cards">
+      <div class="h-card"><div class="hc-ico">📬</div><div class="hc-lbl">Inbox</div><div class="hc-val">247 sorted</div><div class="hc-badge">✓ Done</div></div>
+      <div class="h-card"><div class="hc-ico">📅</div><div class="hc-lbl">Next meeting</div><div class="hc-val">2:00 PM today</div><div class="hc-badge">Set</div></div>
+      <div class="h-card"><div class="hc-ico">📱</div><div class="hc-lbl">TikTok reach</div><div class="hc-val">27x growth</div><div class="hc-badge">↑ This month</div></div>
+      <div class="h-card"><div class="hc-ico">📋</div><div class="hc-lbl">Content ready</div><div class="hc-val">April planned</div><div class="hc-badge">✓ All set</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- MARQUEE -->
+<div class="marquee-bar">
+  <div class="m-track">
+    <span class="m-item">Social Media Management<span class="m-sep"></span></span>
+    <span class="m-item">Email Management<span class="m-sep"></span></span>
+    <span class="m-item">Content Planning<span class="m-sep"></span></span>
+    <span class="m-item">GDrive Organization<span class="m-sep"></span></span>
+    <span class="m-item">Calendar Management<span class="m-sep"></span></span>
+    <span class="m-item">Email Marketing<span class="m-sep"></span></span>
+    <span class="m-item">Admin Support<span class="m-sep"></span></span>
+    <span class="m-item">Social Media Management<span class="m-sep"></span></span>
+    <span class="m-item">Email Management<span class="m-sep"></span></span>
+    <span class="m-item">Content Planning<span class="m-sep"></span></span>
+    <span class="m-item">GDrive Organization<span class="m-sep"></span></span>
+    <span class="m-item">Calendar Management<span class="m-sep"></span></span>
+    <span class="m-item">Email Marketing<span class="m-sep"></span></span>
+    <span class="m-item">Admin Support<span class="m-sep"></span></span>
+  </div>
+</div>
+
+<!-- SERVICES -->
+<section id="services">
+  <div class="section-pad">
+    <div class="svc-header reveal">
+      <div>
+        <div class="eyebrow">What I Do</div>
+        <h2 class="sec-h">Services that <em>free your time</em></h2>
+      </div>
+      <p class="svc-header-sub">Click any service to see exactly what is included — from tools to deliverables.</p>
+    </div>
+
+    <div class="services-grid">
+
+      <div class="service-card" onclick="toggleService(this)">
+        <div class="service-icon-wrap">📱</div>
+        <div class="service-number">01</div>
+        <div class="service-title">Social Media Management</div>
+        <div class="service-desc">Your Instagram and TikTok, consistently active and growing without you having to think about it.</div>
+        <div class="service-detail">
+          <ul class="service-task-list">
+            <li>Create and schedule posts on Instagram and TikTok</li>
+            <li>Reply to comments, DMs, and engage with followers</li>
+            <li>Monitor brand mentions and trending topics</li>
+            <li>Monthly performance report covering reach and growth</li>
+            <li>Hashtag research and caption copywriting</li>
+          </ul>
+          <div class="service-tools">
+            <span class="service-tool-tag">Instagram</span><span class="service-tool-tag">TikTok</span><span class="service-tool-tag">Canva</span><span class="service-tool-tag">Meta Business</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="service-card" onclick="toggleService(this)">
+        <div class="service-icon-wrap">📬</div>
+        <div class="service-number">02</div>
+        <div class="service-title">Email Management</div>
+        <div class="service-desc">A clean, organized inbox with only what matters left in sight. No more hunting through hundreds of unreads.</div>
+        <div class="service-detail">
+          <ul class="service-task-list">
+            <li>Sort and categorize your existing inbox from scratch</li>
+            <li>Create labels, folders, and smart filters</li>
+            <li>Flag important emails for your attention</li>
+            <li>Draft and send replies on your behalf</li>
+            <li>Unsubscribe from spam and irrelevant newsletters</li>
+          </ul>
+          <div class="service-tools">
+            <span class="service-tool-tag">Gmail</span><span class="service-tool-tag">Google Workspace</span><span class="service-tool-tag">Outlook</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="service-card" onclick="toggleService(this)">
+        <div class="service-icon-wrap">💌</div>
+        <div class="service-number">03</div>
+        <div class="service-title">Email Marketing</div>
+        <div class="service-desc">Campaigns that people actually open and act on. From the subject line to the final call to action.</div>
+        <div class="service-detail">
+          <ul class="service-task-list">
+            <li>Write subject lines built to improve open rates</li>
+            <li>Craft body copy with a clear and compelling CTA</li>
+            <li>Design the email layout in Canva or Mailchimp</li>
+            <li>Schedule and send the campaign</li>
+            <li>Report on open rate, click rate, and conversions</li>
+          </ul>
+          <div class="service-tools">
+            <span class="service-tool-tag">Mailchimp</span><span class="service-tool-tag">Canva</span><span class="service-tool-tag">Gmail</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="service-card" onclick="toggleService(this)">
+        <div class="service-icon-wrap">📋</div>
+        <div class="service-number">04</div>
+        <div class="service-title">Content Planning</div>
+        <div class="service-desc">A full month of content, planned and ready before the week even starts. Trend-researched and handed off to your team.</div>
+        <div class="service-detail">
+          <ul class="service-task-list">
+            <li>Research current trends on IG, TikTok, and YouTube</li>
+            <li>Build a monthly content calendar in Trello or Sheets</li>
+            <li>Write content briefs and video scripts</li>
+            <li>Coordinate directly with content creators</li>
+            <li>Review performance weekly and adjust strategy</li>
+          </ul>
+          <div class="service-tools">
+            <span class="service-tool-tag">Trello</span><span class="service-tool-tag">Google Sheets</span><span class="service-tool-tag">Google Trends</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="service-card" onclick="toggleService(this)">
+        <div class="service-icon-wrap">📂</div>
+        <div class="service-number">05</div>
+        <div class="service-title">GDrive Management</div>
+        <div class="service-desc">Every file in its place. A folder structure your whole team can navigate without asking where anything is.</div>
+        <div class="service-detail">
+          <ul class="service-task-list">
+            <li>Audit your existing Drive and identify what needs fixing</li>
+            <li>Build a clear, logical folder hierarchy</li>
+            <li>Rename, label, and star all key documents</li>
+            <li>Configure shared access and permissions</li>
+            <li>Maintain the structure on an ongoing basis</li>
+          </ul>
+          <div class="service-tools">
+            <span class="service-tool-tag">Google Drive</span><span class="service-tool-tag">Google Docs</span><span class="service-tool-tag">Sheets</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="service-card" onclick="toggleService(this)">
+        <div class="service-icon-wrap">📅</div>
+        <div class="service-number">06</div>
+        <div class="service-title">Calendar Management</div>
+        <div class="service-desc">Your schedule, fully under control. Every appointment booked, every conflict caught before it happens.</div>
+        <div class="service-detail">
+          <ul class="service-task-list">
+            <li>Schedule appointments, meetings, and recurring events</li>
+            <li>Set reminders and follow-up alerts for key commitments</li>
+            <li>Coordinate with attendees across time zones</li>
+            <li>Block out focus time and protect personal commitments</li>
+            <li>Send a weekly overview with prep notes every Monday</li>
+          </ul>
+          <div class="service-tools">
+            <span class="service-tool-tag">Google Calendar</span><span class="service-tool-tag">Gmail</span><span class="service-tool-tag">Google Meet</span>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ABOUT -->
+<section id="about">
+  <div class="about-l">
+    <div class="about-ey">About Me</div>
+    <blockquote class="about-quote">"The behind-the-scenes work that keeps <em>everything moving</em> — that is where I come in."</blockquote>
+    <div class="about-sig">Dearly Ayu Z H · Virtual Assistant</div>
+    <div class="about-stats">
+      <div><div class="as-num">4+</div><div class="as-lbl">Years Active</div></div>
+      <div><div class="as-num">6+</div><div class="as-lbl">Brands</div></div>
+      <div><div class="as-num">IPB</div><div class="as-lbl">University</div></div>
+    </div>
+  </div>
+  <div class="about-r">
+    <div class="about-photo-wrap"><div class="about-photo-init">DA</div><div class="about-strip"></div></div>
+    <div class="about-details">
+      <div class="about-badges">
+        <div class="ab-badge"><div class="ab-val">4+</div><div class="ab-key">Years</div></div>
+        <div class="ab-badge"><div class="ab-val">IPB</div><div class="ab-key">University</div></div>
+        <div class="ab-badge"><div class="ab-val">6+</div><div class="ab-key">Brands</div></div>
+      </div>
+      <p class="about-body">After finishing in Community Nutrition at IPB University, I realized my real interest was in the operational side of business — the systems, content, and communication that keeps everything moving. I have since worked with brands across food, lifestyle, and education, handling everything from a messy inbox to a full social media calendar.</p>
+      <div class="eyebrow" style="margin-bottom:1.25rem">Education and Training</div>
+      <div class="tl">
+        <div class="tl-item"><div class="tl-dot"></div><div class="tl-date">Oct to Nov 2023</div><div class="tl-role">SGB Virtual Assistant Training</div><div class="tl-desc">Admin tasks, email marketing, and social media management</div></div>
+        <div class="tl-item"><div class="tl-dot"></div><div class="tl-date">Mar 2023</div><div class="tl-role">Social Media Analytics at MySkill</div><div class="tl-desc">User behaviour analysis and data-driven insight</div></div>
+        <div class="tl-item"><div class="tl-dot"></div><div class="tl-date">Mar 2021</div><div class="tl-role">Digital Marketing at REVO</div><div class="tl-desc">Digital strategy fundamentals and content optimization</div></div>
+        <div class="tl-item"><div class="tl-dot"></div><div class="tl-date">2021</div><div class="tl-role">S.Gz, IPB University, Bogor</div><div class="tl-desc">Bachelor of Community Nutrition</div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- EXPERIENCE -->
+<section id="experience">
+  <div class="section-pad">
+    <div class="reveal">
+      <div class="eyebrow">Track Record</div>
+      <h2 class="sec-h">Brands I have <em>worked with</em></h2>
+    </div>
+    <div class="exp-grid">
+      <div class="exp-card reveal" data-n="01"><div class="exp-top"><div><div class="exp-co">Agrowisata PTPN 1</div><div class="exp-role">Marketing and Sales</div></div><div class="exp-period">Dec 2025 to present</div></div><p class="exp-desc">Developed content strategy for Layung in Rancabali. Grew TikTok impressions 27x within the first month through short-form video optimization. Handles competitor research, monthly digital reports, and event coordination.</p><div class="exp-tags"><span class="exp-tag">TikTok</span><span class="exp-tag">Instagram</span><span class="exp-tag">Strategy</span></div></div>
+      <div class="exp-card reveal" style="transition-delay:.07s" data-n="02"><div class="exp-top"><div><div class="exp-co">Dokyen Clinic</div><div class="exp-role">Patient Support Admin</div></div><div class="exp-period">Mar 2024 to present</div></div><p class="exp-desc">Handles responsive patient communication covering consultations, inquiries, and complaints. Resolved complex service issues through cross-team coordination and manages end-to-end patient follow-up.</p><div class="exp-tags"><span class="exp-tag">Patient Relations</span><span class="exp-tag">Admin</span></div></div>
+      <div class="exp-card reveal" style="transition-delay:.12s" data-n="03"><div class="exp-top"><div><div class="exp-co">Kweh.Kies (Dear Food)</div><div class="exp-role">Marketing and Seller</div></div><div class="exp-period">Mar 2024 and Feb 2025</div></div><p class="exp-desc">Hosted live selling sessions drawing 2,000+ viewers — 116 units sold in 2024 and 152 in 2025 Ramadan campaign. Designed all product visuals and wrote all promotional copy in Canva.</p><div class="exp-tags"><span class="exp-tag">Live Selling</span><span class="exp-tag">Shopee</span><span class="exp-tag">Canva</span></div></div>
+      <div class="exp-card reveal" style="transition-delay:.17s" data-n="04"><div class="exp-top"><div><div class="exp-co">Nutricious</div><div class="exp-role">Social Media Specialist</div></div><div class="exp-period">Aug to Nov 2023</div></div><p class="exp-desc">Managed Instagram and TikTok and ran a webinar campaign with 128 participants. Grew engagement 60% during a creator collaboration. Produced 15+ content pieces with full caption and hashtag strategy.</p><div class="exp-tags"><span class="exp-tag">Instagram</span><span class="exp-tag">TikTok</span><span class="exp-tag">60% Eng.</span></div></div>
+      <div class="exp-card reveal" style="transition-delay:.22s" data-n="05"><div class="exp-top"><div><div class="exp-co">Teens Educ</div><div class="exp-role">Head of Social Media Management</div></div><div class="exp-period">Oct 2022 to Oct 2023</div></div><p class="exp-desc">Led a team of 10 across TikTok, Instagram, and YouTube. Grew Instagram from 11K to 13K in 2 months. Achieved a 12% TikTok engagement rate with educational short-form content.</p><div class="exp-tags"><span class="exp-tag">Team Lead</span><span class="exp-tag">12% ER</span></div></div>
+      <div class="exp-card reveal" style="transition-delay:.27s" data-n="06"><div class="exp-top"><div><div class="exp-co">Nutrition Working Group</div><div class="exp-role">Research Assistant</div></div><div class="exp-period">Apr 2021 to Jun 2024</div></div><p class="exp-desc">Managed 30 to 40 respondents across a four-year longitudinal study. Conducted regular follow-ups, maintained data accuracy, and built respondent trust for consistent participation.</p><div class="exp-tags"><span class="exp-tag">Research</span><span class="exp-tag">Relationship Mgmt</span></div></div>
+    </div>
+    <div class="aw-row reveal" style="transition-delay:.3s">
+      <div class="aw"><div class="aw-ico">🏆</div><div class="aw-title">National Instagram Story and Reels Contest</div><div class="aw-org">Kreasikan Katsumu by Katsunyaka</div><div class="aw-yr">2024</div></div>
+      <div class="aw"><div class="aw-ico">🏆</div><div class="aw-title">National Instagram Story Contest</div><div class="aw-org">Share Your Moments by Jabarano Coffee</div><div class="aw-yr">2025</div></div>
+      <div class="aw"><div class="aw-ico">🥇</div><div class="aw-title">1st Place National Scientific Writing</div><div class="aw-org">Chemistry in Action by IMASIKA IPB</div><div class="aw-yr">2019</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- WORKS -->
+<section id="works">
+  <div class="section-pad">
+    <div class="works-head reveal">
+      <div><div class="eyebrow">My Works</div><h2 class="sec-h">See it <em>in action</em></h2></div>
+      <p class="works-sub">Flip the card to see what I deliver. Switch tabs to change the work type.</p>
+    </div>
+    <div class="work-tabs">
+      <button class="w-tab on" onclick="showWork('email-mgmt',this)">📬 Email Mgmt</button>
+      <button class="w-tab" onclick="showWork('calendar',this)">📅 Calendar</button>
+      <button class="w-tab" onclick="showWork('gdrive',this)">📂 GDrive</button>
+      <button class="w-tab" onclick="showWork('content',this)">📋 Content</button>
+      <button class="w-tab" onclick="showWork('email-mkt',this)">💌 Email Mkt</button>
+    </div>
+    <div class="works-grid reveal" style="transition-delay:.1s">
+      <div class="flip-wrap" id="mainFlip">
+        <div class="flip-inner">
+          <div class="flip-f">
+            <div class="demo-pad">
+              <div class="demo-lbl" id="demoLbl">📬 Inbox · After Organizing</div>
+              <div class="flip-trigger-row"><div class="flip-trig" onclick="document.getElementById('mainFlip').classList.toggle('flipped')">See what I deliver</div></div>
+              <div id="demoContent"></div>
+            </div>
+          </div>
+          <div class="flip-b">
+            <div id="fbContent"></div>
+            <div class="fb-back" onclick="document.getElementById('mainFlip').classList.toggle('flipped')">Back to demo</div>
+          </div>
+        </div>
+      </div>
+      <div class="works-info" id="infoPanel"></div>
+    </div>
+  </div>
+</section>
+
+<!-- TOOLS -->
+<section id="tools">
+  <div class="section-pad">
+    <div class="reveal"><div class="eyebrow">Tools and Platforms</div><h2 class="sec-h">What I work <em>with</em></h2></div>
+    <div class="tool-cats">
+      <div class="reveal">
+        <div class="tc-lbl">Planning and Admin</div>
+        <div class="tc-row"><div class="t-chip">📊 Google Sheets</div><div class="t-chip">📄 Google Docs</div><div class="t-chip">📁 Google Drive</div><div class="t-chip">📅 Google Calendar</div><div class="t-chip">📬 Gmail</div><div class="t-chip">📋 Trello</div><div class="t-chip">💼 Microsoft Office</div><div class="t-chip">📧 Mailchimp</div></div>
+      </div>
+      <div class="reveal" style="transition-delay:.1s">
+        <div class="tc-lbl">Content and Social</div>
+        <div class="tc-row"><div class="t-chip">🎨 Canva</div><div class="t-chip">🖼️ Adobe Photoshop</div><div class="t-chip">📱 Instagram</div><div class="t-chip">🎵 TikTok</div><div class="t-chip">✂️ CapCut</div><div class="t-chip">🎬 VN Editor</div><div class="t-chip">📣 TikTok Ads</div><div class="t-chip">🛒 Shopee Seller Center</div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CONTACT -->
+<section id="contact">
+  <div class="contact-inner">
+    <div class="c-ey">Get in Touch</div>
+    <h2 class="c-title">Ready to take things<br><em>off your plate?</em></h2>
+    <p class="c-sub">Whether it is a chaotic inbox, an inconsistent posting schedule, or a Drive nobody can navigate — send a message and let us figure out what makes sense for your business.</p>
+    <div class="c-links">
+      <a href="https://wa.me/6281809223072" target="_blank" class="c-btn w">💬 WhatsApp Me</a>
+      <a href="mailto:dearlywillassistyou@gmail.com" class="c-btn g">✉ Email</a>
+      <a href="https://linkedin.com/in/dearlyayu" target="_blank" class="c-btn g">💼 LinkedIn</a>
+    </div>
+    <div class="c-social">
+      <a href="https://instagram.com/dearlyhaq" target="_blank">@dearlyhaq</a>
+      <a href="https://tiktok.com/@10_da0" target="_blank">@10_da0</a>
+    </div>
+  </div>
+</section>
+
+<footer><p>2026 Dearly Ayu Z H · Virtual Assistant · <span>Open for new clients</span></p></footer>
+
+<script>
+/* ── INTRO ── */
+(function() {
+  var lines = [
+    { txt: document.getElementById('it0'), cur: document.getElementById('ic0'), text: 'inbox cleared.' },
+    { txt: document.getElementById('it1'), cur: document.getElementById('ic1'), text: 'calendar set.' },
+    { txt: document.getElementById('it2'), cur: document.getElementById('ic2'), text: 'content planned.' },
+    { txt: document.getElementById('it3'), cur: document.getElementById('ic3'), text: 'your business, handled.' }
+  ];
+  var typeSpeed = 52, pauseBetween = 370;
+
+  function typeLine(idx) {
+    if (idx >= lines.length) {
+      document.getElementById('iFinal').classList.add('show');
+      setTimeout(function() {
+        var el = document.getElementById('intro');
+        el.classList.add('exit');
+        setTimeout(function() { el.style.display = 'none'; document.getElementById('nav').classList.add('show'); }, 720);
+      }, 1100);
+      return;
+    }
+    var l = lines[idx];
+    l.txt.textContent = '';
+    l.cur.style.display = 'inline-block';
+    var i = 0;
+    var iv = setInterval(function() {
+      l.txt.textContent = l.text.slice(0, ++i);
+      if (i >= l.text.length) {
+        clearInterval(iv);
+        l.cur.style.display = 'none';
+        document.getElementById('il' + idx).classList.add('done');
+        setTimeout(function() { typeLine(idx + 1); }, pauseBetween);
+      }
+    }, typeSpeed);
+  }
+  setTimeout(function() { typeLine(0); }, 550);
+})();
+
+/* ── NAV ── */
+window.addEventListener('scroll', function() {
+  document.getElementById('nav').classList.toggle('solid', window.scrollY > 60);
+}, { passive: true });
+
+/* ── PARALLAX ── */
+var bg = document.getElementById('heroBg');
+window.addEventListener('scroll', function() {
+  if (bg && window.scrollY < window.innerHeight) bg.style.transform = 'translateY(' + window.scrollY * 0.2 + 'px)';
+}, { passive: true });
+
+/* ── SERVICES ── */
+function toggleService(card) {
+  var isActive = card.classList.contains('active');
+  document.querySelectorAll('.service-card').forEach(function(c) { c.classList.remove('active'); });
+  if (!isActive) card.classList.add('active');
+}
+
+/* ── REVEAL ── */
+var io = new IntersectionObserver(function(e) {
+  e.forEach(function(en) { if (en.isIntersecting) en.target.classList.add('vis'); });
+}, { threshold: 0.1 });
+document.querySelectorAll('.reveal, .exp-card, .tl-item').forEach(function(el) { io.observe(el); });
+document.querySelectorAll('.exp-card').forEach(function(c, i) { c.style.transitionDelay = (i * 0.07) + 's'; });
+
+/* ── INBOX ── */
+var inboxData = {
+  primary: [
+    { dot:'#22C55E', from:'Grab',           subj:'Your Grab E-Receipt — GrabBike Hemat',   badge:'Receipt', bc:'rgba(34,197,94,0.1)',   tc:'#16A34A' },
+    { dot:'#E8622A', from:'Bareksa',         subj:'Penjualan Berhasil — Konfirmasi',         badge:'Trading', bc:'rgba(232,98,42,0.1)',   tc:'#E8622A' },
+    { dot:'#3B82F6', from:'Ajaib Sekuritas', subj:'Rangkuman Transaksi Saham Harian',        badge:'Bank',    bc:'rgba(59,130,246,0.1)',  tc:'#2563EB' },
+    { dot:'#EF4444', from:'S-Invest KSEI',   subj:'Notifikasi Transaksi Nasabah',            badge:'Alert',   bc:'rgba(239,68,68,0.1)',   tc:'#DC2626' },
+    { dot:'#E8622A', from:'Bibit',           subj:'Reksa Dana Kamu Sudah Masuk',             badge:'Trading', bc:'rgba(232,98,42,0.1)',   tc:'#E8622A' }
+  ],
+  promotions: [
+    { dot:'#F97316', from:'Tokopedia',   subj:'Flash Sale Hari Ini — Diskon 70%!',      badge:'Promo',   bc:'rgba(249,115,22,0.1)', tc:'#EA580C' },
+    { dot:'#EC4899', from:'Shopee',      subj:'Voucher Gratis Ongkir Kamu Tersedia',    badge:'Voucher', bc:'rgba(236,72,153,0.1)', tc:'#DB2777' },
+    { dot:'#8B5CF6', from:'Lazada',      subj:'Mega Sale — Dapatkan hingga 80% Off',   badge:'Sale',    bc:'rgba(139,92,246,0.1)', tc:'#7C3AED' },
+    { dot:'#F97316', from:'Gojek',       subj:'Promo GoFood Weekend Spesial',          badge:'Promo',   bc:'rgba(249,115,22,0.1)', tc:'#EA580C' },
+    { dot:'#3B82F6', from:'Google Play', subj:'Penawaran Eksklusif untuk Kamu',        badge:'Offer',   bc:'rgba(59,130,246,0.1)', tc:'#2563EB' }
+  ],
+  social: [
+    { dot:'#EC4899', from:'Instagram', subj:'Dearly, ada 12 orang menyukaimu postingan', badge:'IG', bc:'rgba(236,72,153,0.1)', tc:'#DB2777' },
+    { dot:'#3B82F6', from:'LinkedIn',  subj:'5 orang melihat profil kamu minggu ini',   badge:'LI', bc:'rgba(59,130,246,0.1)', tc:'#2563EB' },
+    { dot:'#22C55E', from:'WhatsApp',  subj:'Pesan baru dari klien — Agrowisata',       badge:'WA', bc:'rgba(34,197,94,0.1)',  tc:'#16A34A' },
+    { dot:'#EF4444', from:'YouTube',   subj:'Video kamu mendapat 234 views baru',       badge:'YT', bc:'rgba(239,68,68,0.1)',  tc:'#DC2626' },
+    { dot:'#3B82F6', from:'Twitter/X', subj:'Kamu punya 3 mention baru',               badge:'X',  bc:'rgba(59,130,246,0.1)', tc:'#2563EB' }
+  ]
+};
+
+function inboxHTML(tab) {
+  var rows = inboxData[tab].map(function(r) {
+    return '<div class="e-row"><span class="e-dot" style="background:'+r.dot+'"></span><div><div class="e-from">'+r.from+'</div><div class="e-subj">'+r.subj+'</div></div><span class="e-badge" style="background:'+r.bc+';color:'+r.tc+'">'+r.badge+'</span></div>';
+  }).join('');
+  var tabs = ['primary','promotions','social'].map(function(t) {
+    return '<span class="ed-tab'+(t===tab?' on':'')+'" onclick="switchTab(\''+t+'\',this)">'+(t.charAt(0).toUpperCase()+t.slice(1))+'</span>';
+  }).join('');
+  return '<div class="ed"><div class="ed-hdr">'+tabs+'</div>'+rows+'</div>';
+}
+
+function switchTab(tab, el) {
+  document.querySelectorAll('.ed-tab').forEach(function(t) { t.classList.remove('on'); });
+  el.classList.add('on');
+  document.getElementById('demoContent').innerHTML = inboxHTML(tab);
+}
+
+function calHTML() {
+  var days = '<div class="cal-dn">SUN</div><div class="cal-dn">MON</div><div class="cal-dn">TUE</div><div class="cal-dn">WED</div><div class="cal-dn">THU</div><div class="cal-dn">FRI</div><div class="cal-dn">SAT</div>';
+  var grid = '<div class="cal-d oth">23</div><div class="cal-d oth">24</div><div class="cal-d oth">25</div><div class="cal-d oth">26</div><div class="cal-d oth">27</div><div class="cal-d oth">28</div><div class="cal-d">1</div><div class="cal-d">2</div><div class="cal-d ev" onclick="showCE(\'3 Mar\',\'Team sync\',\'09:00\',\'#E8622A\')">3</div><div class="cal-d">4</div><div class="cal-d ev" onclick="showCE(\'5 Mar\',\'Client review\',\'14:00\',\'#3B82F6\')">5</div><div class="cal-d">6</div><div class="cal-d ev" onclick="showCE(\'7 Mar\',\'Posts scheduled\',\'17:00\',\'#E8622A\')">7</div><div class="cal-d">8</div><div class="cal-d">9</div><div class="cal-d">10</div><div class="cal-d ev" onclick="showCE(\'11 Mar\',\'Report due\',\'10:00\',\'#E8622A\')">11</div><div class="cal-d">12</div><div class="cal-d">13</div><div class="cal-d ev" onclick="showCE(\'14 Mar\',\'Strategy call\',\'15:00\',\'#3B82F6\')">14</div><div class="cal-d">15</div><div class="cal-d">16</div><div class="cal-d ev" onclick="showCE(\'17 Mar\',\'Content batch\',\'11:00\',\'#E8622A\')">17</div><div class="cal-d">18</div><div class="cal-d">19</div><div class="cal-d">20</div><div class="cal-d">21</div><div class="cal-d today">22</div><div class="cal-d">23</div><div class="cal-d ev" onclick="showCE(\'24 Mar\',\'Vendor call\',\'13:00\',\'#E8622A\')">24</div><div class="cal-d">25</div><div class="cal-d">26</div><div class="cal-d ev" onclick="showCE(\'27 Mar\',\'Email campaign\',\'09:00\',\'#3B82F6\')">27</div><div class="cal-d">28</div><div class="cal-d">29</div><div class="cal-d">30</div><div class="cal-d ev" onclick="showCE(\'31 Mar\',\'Month debrief\',\'16:00\',\'#3B82F6\')">31</div>';
+  return '<div class="cal-hdr"><div class="cal-mo">March 2026</div><div class="cal-nav"><button class="cal-nb">&#8592;</button><button class="cal-nb">&#8594;</button></div></div><div class="cal-g">'+days+grid+'</div><div class="cal-ev-list" id="cal-ev"><div class="cal-ev-item"><div class="cal-ev-dot" style="background:var(--orange)"></div><div class="cal-ev-t">Today</div><div class="cal-ev-n">Tap a highlighted date</div></div></div>';
+}
+
+function showCE(date, name, time, color) {
+  var el = document.getElementById('cal-ev');
+  if (el) el.innerHTML = '<div class="cal-ev-item"><div class="cal-ev-dot" style="background:'+color+'"></div><div class="cal-ev-t">'+time+'</div><div class="cal-ev-n">'+name+'</div></div><div style="font-size:0.58rem;color:var(--low);padding:0.28rem 0;border-top:1px solid var(--border);">'+date+'</div>';
+}
+
+function gdriveHTML() {
+  var items = [['client assets','01 Client Assets','1.2 GB'],['monthly reports','02 Monthly Reports','340 MB'],['content calendar','03 Content Calendar','480 MB'],['email templates','04 Email Templates','220 MB'],['invoices','05 Invoices','90 MB'],['archive','06 Archive','2.1 GB']];
+  return '<div class="gd-srch"><span style="color:var(--low)">🔍</span><input placeholder="Search in Drive..." oninput="filterFolders(this.value)" /></div><div class="f-grid" id="folder-grid">'+items.map(function(f){return '<div class="f-item" data-name="'+f[0]+'" onclick="selectFolder(this,\''+f[1]+'\',\''+f[2]+'\')"><span class="f-ico">📁</span><div><div class="f-name">'+f[1]+'</div><div class="f-sz">'+f[2]+'</div></div></div>';}).join('')+'</div><div id="folder-detail" style="display:none;margin-top:0.65rem;padding:0.5rem 0.75rem;background:var(--ol);border-radius:0.4rem;border:1px solid rgba(232,98,42,0.2);font-size:0.7rem;color:var(--mid);"></div>';
+}
+
+function filterFolders(val) {
+  var q = val.toLowerCase();
+  document.querySelectorAll('#folder-grid .f-item').forEach(function(item) { item.style.display = (!q || item.dataset.name.includes(q)) ? 'flex' : 'none'; });
+}
+
+function selectFolder(el, name, size) {
+  document.querySelectorAll('.f-item').forEach(function(f) { f.style.borderColor = 'var(--border)'; f.style.background = 'var(--bg2)'; });
+  el.style.borderColor = 'rgba(232,98,42,0.4)'; el.style.background = 'var(--ol)';
+  var det = document.getElementById('folder-detail');
+  det.style.display = 'block';
+  det.innerHTML = '📂 <strong>'+name+'</strong> · '+size+' · Last modified today';
+}
+
+function kanbanHTML() {
+  return '<div class="kb-cols"><div><div class="kb-hdr" style="color:var(--orange)">Ideas</div><div class="kb-card" onclick="moveCard(this,\'kp\')">BTS: packaging day<div class="kb-plat">📸 IG · tap to move</div></div><div class="kb-card" onclick="moveCard(this,\'kp\')">FAQ ingredients video<div class="kb-plat">🎵 TikTok · tap to move</div></div><div class="kb-card" onclick="moveCard(this,\'kp\')">Trending sound reveal<div class="kb-plat">🎵 TikTok · tap to move</div></div></div><div id="kp"><div class="kb-hdr" style="color:#3B82F6">In Progress</div><div class="kb-card" onclick="moveCard(this,\'ks\')">Week 2 Reels — Ramadan<div class="kb-plat">📸 IG · tap to move</div></div><div class="kb-card" onclick="moveCard(this,\'ks\')">Price list Stories<div class="kb-plat">📸 IG · tap to move</div></div></div><div id="ks"><div class="kb-hdr" style="color:#22C55E">Scheduled</div><div class="kb-card">15 Mar — Launch post<div class="kb-plat">📸 Instagram</div></div><div class="kb-card">17 Mar — Testimonial<div class="kb-plat">🎵 TikTok</div></div></div></div><div style="margin-top:0.5rem;font-size:0.55rem;color:var(--low);letter-spacing:0.08em;text-transform:uppercase;">Tap any card to move it</div>';
+}
+
+function moveCard(card, dest) {
+  var col = document.getElementById(dest);
+  var clone = card.cloneNode(true);
+  var p = clone.querySelector('.kb-plat');
+  if (p) p.textContent = p.textContent.replace(' · tap to move', '');
+  clone.onclick = dest === 'kp' ? function() { moveCard(clone, 'ks'); } : null;
+  if (dest === 'kp') { var pp = clone.querySelector('.kb-plat'); if (pp) pp.textContent += ' · tap to move'; }
+  col.appendChild(clone);
+  card.style.opacity = '0.3'; card.style.pointerEvents = 'none'; card.style.textDecoration = 'line-through';
+}
+
+function emktHTML() {
+  return '<div class="emt"><div class="emt-top"><div class="emt-subj" id="emt-subj">Claim Your 65% Off Before It Expires!</div><div class="emt-rate">Open rate: 42%</div></div><div class="emt-body"><div class="emt-hero-blk">🏷️ 65% OFF</div><div class="emt-line"></div><div class="emt-line"></div><div class="emt-line sh"></div><div style="margin:0.55rem 0;font-size:0.65rem;color:var(--low);">Hi [Name], your voucher expires in 2 days. 65% off all products.</div><div class="emt-cta" onclick="testCTA()">Shop Now Before It Is Gone</div></div></div><div style="margin-top:0.75rem;"><div style="font-size:0.55rem;color:var(--low);text-transform:uppercase;letter-spacing:0.1em;margin-bottom:0.4rem;">Try a subject line</div><div style="display:flex;gap:0.35rem;flex-wrap:wrap;" id="sv">'+[['Urgency','Claim Your 65% Off Before It Expires!'],['Tonight','Your Voucher Expires Tonight'],['Personal','[Name], 65% off just for you'],['FOMO','Last chance: biggest sale of the year']].map(function(s){return '<button onclick="prevSubj(this,\''+s[1].replace(/'/g,"\\'")+'\')\" style="padding:0.22rem 0.55rem;font-size:0.6rem;border-radius:2rem;background:rgba(40,24,10,0.04);border:1.5px solid var(--border);color:var(--low);cursor:pointer;transition:all 0.2s;">'+s[0]+'</button>';}).join('')+'</div></div>';
+}
+
+function testCTA() {
+  var btn = document.querySelector('.emt-cta');
+  if (!btn) return;
+  var orig = btn.textContent;
+  btn.textContent = 'Clicked! CTA works'; btn.style.background = '#22C55E';
+  setTimeout(function() { btn.textContent = orig; btn.style.background = ''; }, 1500);
+}
+
+function prevSubj(btn, subj) {
+  var el = document.getElementById('emt-subj'); if (el) el.textContent = subj;
+  document.querySelectorAll('#sv button').forEach(function(b) { b.style.background = 'rgba(40,24,10,0.04)'; b.style.borderColor = 'var(--border)'; b.style.color = 'var(--low)'; });
+  btn.style.background = 'var(--ol)'; btn.style.borderColor = 'rgba(232,98,42,0.3)'; btn.style.color = 'var(--orange)';
+}
+
+/* ── WORKS ── */
+var workData = {
+  'email-mgmt': { lbl:'📬 Inbox · After Organizing', html:function(){return inboxHTML('primary');}, back:{title:'Email Management',desc:'A chaotic inbox becomes a clean, labeled system.',outcomes:['Inbox zero approach applied','Primary, Promotions, Social labeled','Spam cleared','Priority flagging configured']}, info:{icon:'📬',title:'Email Management',desc:'No more hunting through hundreds of unreads. I sort, flag, filter, and draft replies so only what matters reaches you.'} },
+  'calendar':   { lbl:'📅 Calendar · March 2026', html:calHTML, back:{title:'Calendar Management',desc:'Every appointment handled, every conflict caught.',outcomes:['Recurring meetings scheduled','Focus blocks protected','Reminders and prep notes set','Timezone coordination covered']}, info:{icon:'📅',title:'Calendar Management',desc:'Your week, fully mapped. Tap any highlighted date in the demo to see how I set up a client calendar.'} },
+  'gdrive':     { lbl:'📂 GDrive · Organized Structure', html:gdriveHTML, back:{title:'GDrive Management',desc:'Every file has a home anyone can find.',outcomes:['Logical folder hierarchy built','Files renamed and categorized','Shared access configured','Key documents starred']}, info:{icon:'📂',title:'GDrive Management',desc:'Try searching or clicking a folder to see how I organize a client Drive from scratch.'} },
+  'content':    { lbl:'📋 Content Board · March 2026', html:kanbanHTML, back:{title:'Content Planning',desc:'A full month of content ready before the week starts.',outcomes:['Monthly Kanban board built','Scripts and briefs written','Trends researched weekly','Creator coordination handled']}, info:{icon:'📋',title:'Content Planning',desc:'Tap the cards in the board to move them across stages — that is how I manage content in Trello every week.'} },
+  'email-mkt':  { lbl:'💌 Email Campaign · OWNRS', html:emktHTML, back:{title:'Email Marketing',desc:'Campaigns built to be opened and acted on.',outcomes:['Subject line written for open rate','Body copy with a clear CTA','Campaign designed in Canva','Results tracked and reported']}, info:{icon:'💌',title:'Email Marketing',desc:'Swap subject lines in the demo to see how small copy changes affect campaign open rate.'} }
+};
+
+function showWork(key, btn) {
+  document.querySelectorAll('.w-tab').forEach(function(t) { t.classList.remove('on'); });
+  btn.classList.add('on');
+  document.getElementById('mainFlip').classList.remove('flipped');
+  var d = workData[key];
+  document.getElementById('demoLbl').textContent = d.lbl;
+  document.getElementById('demoContent').innerHTML = d.html();
+  document.getElementById('fbContent').innerHTML = '<div class="fb-title">'+d.back.title+'</div><div class="fb-desc">'+d.back.desc+'</div><ul class="fb-ul">'+d.back.outcomes.map(function(o){return '<li>'+o+'</li>';}).join('')+'</ul>';
+  document.getElementById('infoPanel').innerHTML = '<div class="wi-icon">'+d.info.icon+'</div><div class="wi-title">'+d.info.title+'</div><div class="wi-desc">'+d.info.desc+'</div><ul class="wi-ul">'+d.back.outcomes.map(function(o){return '<li>'+o+'</li>';}).join('')+'</ul>';
+}
+
+showWork('email-mgmt', document.querySelector('.w-tab.on'));
+</script>
+</body>
+</html>

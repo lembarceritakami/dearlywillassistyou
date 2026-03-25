@@ -173,12 +173,17 @@
     }
     .hero-photo-zone {
       flex: 1; background: var(--bg3);
-      display: flex; align-items: center; justify-content: center;
+      display: flex; align-items: flex-start; justify-content: center;
       position: relative; overflow: hidden; min-height: 300px;
     }
     .hero-photo-zone::after {
       content: ''; position: absolute; bottom: 0; left: 0; right: 0;
       height: 80px; background: linear-gradient(to bottom, transparent, var(--bg2));
+    }
+    .hero-photo-zone img {
+      width: 100%; height: 100%;
+      object-fit: cover; object-position: center top;
+      position: absolute; inset: 0;
     }
     .hero-init-text { font-family: var(--serif); font-size: 16rem; font-weight: 400; font-style: italic; color: rgba(232,98,42,0.08); user-select: none; mask-image: linear-gradient(to top, transparent 0%, black 35%); -webkit-mask-image: linear-gradient(to top, transparent 0%, black 35%); }
     /* HERO PHOTO: replace .hero-photo-zone content with <img src="dearly.jpg" style="width:100%;height:100%;object-fit:cover;object-position:top center;" /> */
@@ -325,7 +330,8 @@
     .as-lbl { font-size: 0.6rem; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: rgba(255,255,255,0.5); margin-top: 0.2rem; }
 
     .about-r { background: var(--bg); display: flex; flex-direction: column; }
-    .about-photo-wrap { flex: 1; min-height: 280px; background: var(--bg3); position: relative; display: flex; align-items: center; justify-content: center; overflow: hidden; }
+    .about-photo-wrap { flex: 1; min-height: 280px; background: var(--bg3); position: relative; overflow: hidden; }
+    .about-photo-wrap img { width: 100%; height: 100%; object-fit: cover; object-position: center top; position: absolute; inset: 0; }
     .about-photo-init { font-family: var(--serif); font-size: 16rem; font-weight: 400; font-style: italic; color: rgba(232,98,42,0.08); user-select: none; mask-image: linear-gradient(to top, transparent 0%, black 30%); -webkit-mask-image: linear-gradient(to top, transparent 0%, black 30%); }
     /* ABOUT PHOTO: replace .about-photo-wrap content with <img src="dearly.jpg" style="width:100%;height:100%;object-fit:cover;object-position:top center;" /> */
     .about-strip { position: absolute; bottom: 0; left: 0; right: 0; height: 3px; background: linear-gradient(90deg, var(--orange), transparent); }
@@ -571,7 +577,7 @@
     <div class="scroll-cue"><div class="sc-line"></div><div class="sc-txt">scroll</div></div>
   </div>
   <div class="hero-r">
-    <img src="dearly.jpg" style="width:100%;height:100%;object-fit:cover;object-position:top center;" />
+    <div class="hero-photo-zone"><div class="hero-init-text">DA</div></div>
     <div class="hero-cards">
       <div class="h-card"><div class="hc-ico">📬</div><div class="hc-lbl">Inbox</div><div class="hc-val">247 sorted</div><div class="hc-badge">✓ Done</div></div>
       <div class="h-card"><div class="hc-ico">📅</div><div class="hc-lbl">Next meeting</div><div class="hc-val">2:00 PM today</div><div class="hc-badge">Set</div></div>
@@ -653,27 +659,8 @@
       </div>
 
       <div class="service-card" onclick="toggleService(this)">
-        <div class="service-icon-wrap">💌</div>
-        <div class="service-number">03</div>
-        <div class="service-title">Email Marketing</div>
-        <div class="service-desc">Campaigns that people actually open and act on. From the subject line to the final call to action.</div>
-        <div class="service-detail">
-          <ul class="service-task-list">
-            <li>Write subject lines built to improve open rates</li>
-            <li>Craft body copy with a clear and compelling CTA</li>
-            <li>Design the email layout in Canva or Mailchimp</li>
-            <li>Schedule and send the campaign</li>
-            <li>Report on open rate, click rate, and conversions</li>
-          </ul>
-          <div class="service-tools">
-            <span class="service-tool-tag">Mailchimp</span><span class="service-tool-tag">Canva</span><span class="service-tool-tag">Gmail</span>
-          </div>
-        </div>
-      </div>
-
-      <div class="service-card" onclick="toggleService(this)">
         <div class="service-icon-wrap">📋</div>
-        <div class="service-number">04</div>
+        <div class="service-number">03</div>
         <div class="service-title">Content Planning</div>
         <div class="service-desc">A full month of content, planned and ready before the week even starts. Trend-researched and handed off to your team.</div>
         <div class="service-detail">
@@ -692,7 +679,7 @@
 
       <div class="service-card" onclick="toggleService(this)">
         <div class="service-icon-wrap">📂</div>
-        <div class="service-number">05</div>
+        <div class="service-number">04</div>
         <div class="service-title">GDrive Management</div>
         <div class="service-desc">Every file in its place. A folder structure your whole team can navigate without asking where anything is.</div>
         <div class="service-detail">
@@ -711,7 +698,7 @@
 
       <div class="service-card" onclick="toggleService(this)">
         <div class="service-icon-wrap">📅</div>
-        <div class="service-number">06</div>
+        <div class="service-number">05</div>
         <div class="service-title">Calendar Management</div>
         <div class="service-desc">Your schedule, fully under control. Every appointment booked, every conflict caught before it happens.</div>
         <div class="service-detail">
@@ -745,7 +732,7 @@
     </div>
   </div>
   <div class="about-r">
-    <img src="dearly.jpg" style="width:100%;height:100%;object-fit:cover;object-position:top center;" />
+    <div class="about-photo-wrap"><div class="about-photo-init">DA</div><div class="about-strip"></div></div>
     <div class="about-details">
       <div class="about-badges">
         <div class="ab-badge"><div class="ab-val">4+</div><div class="ab-key">Years</div></div>
@@ -799,7 +786,6 @@
       <button class="w-tab" onclick="showWork('calendar',this)">📅 Calendar</button>
       <button class="w-tab" onclick="showWork('gdrive',this)">📂 GDrive</button>
       <button class="w-tab" onclick="showWork('content',this)">📋 Content</button>
-      <button class="w-tab" onclick="showWork('email-mkt',this)">💌 Email Mkt</button>
     </div>
     <div class="works-grid reveal" style="transition-delay:.1s">
       <div class="flip-wrap" id="mainFlip">
@@ -829,7 +815,7 @@
     <div class="tool-cats">
       <div class="reveal">
         <div class="tc-lbl">Planning and Admin</div>
-        <div class="tc-row"><div class="t-chip">📊 Google Sheets</div><div class="t-chip">📄 Google Docs</div><div class="t-chip">📁 Google Drive</div><div class="t-chip">📅 Google Calendar</div><div class="t-chip">📬 Gmail</div><div class="t-chip">📋 Trello</div><div class="t-chip">💼 Microsoft Office</div><div class="t-chip">📧 Mailchimp</div></div>
+        <div class="tc-row"><div class="t-chip">📊 Google Sheets</div><div class="t-chip">📄 Google Docs</div><div class="t-chip">📁 Google Drive</div><div class="t-chip">📅 Google Calendar</div><div class="t-chip">📬 Gmail</div><div class="t-chip">📋 Trello</div><div class="t-chip">💼 Microsoft Office</div></div>
       </div>
       <div class="reveal" style="transition-delay:.1s">
         <div class="tc-lbl">Content and Social</div>
@@ -1030,8 +1016,7 @@ var workData = {
   'email-mgmt': { lbl:'📬 Inbox · After Organizing', html:function(){return inboxHTML('primary');}, back:{title:'Email Management',desc:'A chaotic inbox becomes a clean, labeled system.',outcomes:['Inbox zero approach applied','Primary, Promotions, Social labeled','Spam cleared','Priority flagging configured']}, info:{icon:'📬',title:'Email Management',desc:'No more hunting through hundreds of unreads. I sort, flag, filter, and draft replies so only what matters reaches you.'} },
   'calendar':   { lbl:'📅 Calendar · March 2026', html:calHTML, back:{title:'Calendar Management',desc:'Every appointment handled, every conflict caught.',outcomes:['Recurring meetings scheduled','Focus blocks protected','Reminders and prep notes set','Timezone coordination covered']}, info:{icon:'📅',title:'Calendar Management',desc:'Your week, fully mapped. Tap any highlighted date in the demo to see how I set up a client calendar.'} },
   'gdrive':     { lbl:'📂 GDrive · Organized Structure', html:gdriveHTML, back:{title:'GDrive Management',desc:'Every file has a home anyone can find.',outcomes:['Logical folder hierarchy built','Files renamed and categorized','Shared access configured','Key documents starred']}, info:{icon:'📂',title:'GDrive Management',desc:'Try searching or clicking a folder to see how I organize a client Drive from scratch.'} },
-  'content':    { lbl:'📋 Content Board · March 2026', html:kanbanHTML, back:{title:'Content Planning',desc:'A full month of content ready before the week starts.',outcomes:['Monthly Kanban board built','Scripts and briefs written','Trends researched weekly','Creator coordination handled']}, info:{icon:'📋',title:'Content Planning',desc:'Tap the cards in the board to move them across stages — that is how I manage content in Trello every week.'} },
-  'email-mkt':  { lbl:'💌 Email Campaign · OWNRS', html:emktHTML, back:{title:'Email Marketing',desc:'Campaigns built to be opened and acted on.',outcomes:['Subject line written for open rate','Body copy with a clear CTA','Campaign designed in Canva','Results tracked and reported']}, info:{icon:'💌',title:'Email Marketing',desc:'Swap subject lines in the demo to see how small copy changes affect campaign open rate.'} }
+  'content':    { lbl:'📋 Content Board · March 2026', html:kanbanHTML, back:{title:'Content Planning',desc:'A full month of content ready before the week starts.',outcomes:['Monthly Kanban board built','Scripts and briefs written','Trends researched weekly','Creator coordination handled']}, info:{icon:'📋',title:'Content Planning',desc:'Tap the cards in the board to move them across stages — that is how I manage content in Trello every week.'} }
 };
 
 function showWork(key, btn) {
